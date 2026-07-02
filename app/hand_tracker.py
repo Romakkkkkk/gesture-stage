@@ -51,6 +51,38 @@ def main():
                         (255, 255, 255),
                         1,
                     )
+                    index_up = hand_landmarks[8].y < hand_landmarks[6].y
+                    middle_up = hand_landmarks[12].y < hand_landmarks[10].y
+                    ring_up = hand_landmarks[16].y < hand_landmarks[14].y
+                    pinky_up = hand_landmarks[20].y < hand_landmarks[18].y
+        
+                    count = 0
+        
+                    if index_up:
+                        count += 1
+        
+                    if middle_up:
+                        count += 1
+        
+                    if ring_up:
+                        count += 1
+            
+                    if pinky_up:
+                        count += 1
+            
+                    cv2.putText(
+                        frame,
+                        f"Fingers: {count}",
+                        (20, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (0, 255, 0),
+                        2,
+                    )                
+                    
+        
+        
+        
 
         # print(result.hand_landmarks)
 
