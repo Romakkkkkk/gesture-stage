@@ -33,7 +33,7 @@ def main():
         result = landmarker.detect(mp_image)
 
         if result.hand_landmarks:
-            for hand_landmarks in result.hand_landmarks:
+            for hand_index, hand_landmarks in enumerate(result.hand_landmarks):
                 for i, landmark in enumerate(hand_landmarks):
                     h, w, _ = frame.shape
 
@@ -70,10 +70,12 @@ def main():
                     if pinky_up:
                         count += 1
             
+                    text_y = 50 + (hand_index * 40)
+
                     cv2.putText(
                         frame,
-                        f"Fingers: {count}",
-                        (20, 50),
+                        f"Hand {hand_index + 1}: {count}",
+                        (20, text_y),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         1,
                         (0, 255, 0),
