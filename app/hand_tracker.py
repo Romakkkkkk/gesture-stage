@@ -59,7 +59,12 @@ def main():
                 middle_up = hand_landmarks[12].y < hand_landmarks[10].y
                 ring_up = hand_landmarks[16].y < hand_landmarks[14].y
                 pinky_up = hand_landmarks[20].y < hand_landmarks[18].y
-
+                
+                if handedness == "Right":
+                    thumb_up = hand_landmarks[4].x > hand_landmarks[3].x
+                else:
+                    thumb_up = hand_landmarks[4].x < hand_landmarks[3].x
+                    
                 count = 0
 
                 if index_up:
@@ -73,6 +78,10 @@ def main():
 
                 if pinky_up:
                     count += 1
+                    
+                if thumb_up:
+                    count += 1
+                        
 
                 text_y = 50 + (hand_index * 40)
 
