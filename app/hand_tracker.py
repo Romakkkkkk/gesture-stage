@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
+import time 
 
 
 def main():
@@ -19,6 +20,10 @@ def main():
     landmarker = vision.HandLandmarker.create_from_options(options)
 
     cap = cv2.VideoCapture(0)
+    
+    last_action_time = 0
+    cooldown_time = 1.0
+    current_effect = "NONE"
 
     while True:
         success, frame = cap.read()
@@ -96,7 +101,7 @@ def main():
                     2,
                 )     
                 
-                if count == 4:
+                if count == 5:
                     gesture = "OPEN PALM"
                 elif count == 0:
                     gesture = "FIST"    
@@ -106,6 +111,12 @@ def main():
                     middle_up and
                     index_up
                 ): gesture = "PEACE"
+                elif thumb_up and count == 1:
+                    gesture = "THUMBS UP"
+                elif index_up and pinky_up and count == 2:
+                    gesture = "ROCK"
+                elif index_up and count == 1:
+                    gesture = "POINT"        
                 else:
                     gesture = "UNKNOWN"
                 
@@ -133,6 +144,29 @@ def main():
                     (0, 255, 255),
                     2,
                 )
+                current_time = time.time()
+                if current_time - last_action_time >= cooldown_time:
+                    if gesture == "OPEN PALM":
+                        current_effect = "NORMAL"
+                    elif gesture == "FIST":
+                        current_effect = "FREEZE"
+                    elif gesture == "PEACE":
+                        current_effect = "PARTY MODE"
+                    elif gesture == "THUMBS UP":
+                        current_effect = "APROVED"
+                        
+                    cooldown_time = current_time    
+                
+                    cv2.putText(
+                        frame,
+                        f"Effect: {current_effect}",
+                        (20, 180),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (255, 0, 255),
+                        2,
+                    )        
+                
                     
                     
                         
