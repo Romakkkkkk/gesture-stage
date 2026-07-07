@@ -158,7 +158,7 @@ def main():
                     elif gesture == "ROCK":
                         current_effect = "EDGE"
                     elif gesture == "POINT":
-                        current_effect = "SPOTLIGHT"
+                        current_effect = "GRAYSCALE"
 
                     last_action_time = current_time
 
@@ -171,15 +171,21 @@ def main():
                     (255, 0, 255),
                     2,
                 )   
+
+                if current_effect == "NORMAL":
+                    pass
+                elif current_effect == "PARTY MODE":
+                    frame = cv2.bitwise_not(frame)
+                elif current_effect == "EDGE":
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    edges = cv2.Canny(gray, 100, 200)
+                    frame = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)   
+                elif current_effect == "GRAYSCALE":     
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
                 
                     
-                    
-                        
-                    
-        
-        
-        
-
+                
         # print(result.hand_landmarks)
 
         cv2.imshow("gesture stage Hand Tracking", frame)
