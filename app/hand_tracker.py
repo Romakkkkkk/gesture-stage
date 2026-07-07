@@ -145,6 +145,7 @@ def main():
                     2,
                 )
                 current_time = time.time()
+
                 if current_time - last_action_time >= cooldown_time:
                     if gesture == "OPEN PALM":
                         current_effect = "NORMAL"
@@ -153,19 +154,23 @@ def main():
                     elif gesture == "PEACE":
                         current_effect = "PARTY MODE"
                     elif gesture == "THUMBS UP":
-                        current_effect = "APROVED"
-                        
-                    cooldown_time = current_time    
-                
-                    cv2.putText(
-                        frame,
-                        f"Effect: {current_effect}",
-                        (20, 180),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (255, 0, 255),
-                        2,
-                    )        
+                        current_effect = "APPROVED"
+                    elif gesture == "ROCK":
+                        current_effect = "EDGE"
+                    elif gesture == "POINT":
+                        current_effect = "SPOTLIGHT"
+
+                    last_action_time = current_time
+
+                cv2.putText(
+                    frame,
+                    f"Effect: {current_effect}",
+                    (20, 180),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 0, 255),
+                    2,
+                )   
                 
                     
                     
