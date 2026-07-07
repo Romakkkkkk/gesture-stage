@@ -204,8 +204,20 @@ def main():
         # print(result.hand_landmarks)
 
         cv2.imshow("gesture stage Hand Tracking", frame)
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord("q"):
             break
+
+        elif key == ord("s"):
+            filename = f"assets/screenshot_{int(time.time())}.png"
+
+            success = cv2.imwrite(filename, frame)
+
+            if success:
+                print(f"Saved: {filename}")
+            else:
+                print("Failed to save screenshot")
 
     cap.release()
     landmarker.close()
