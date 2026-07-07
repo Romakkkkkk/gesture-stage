@@ -183,6 +183,18 @@ def main():
                 elif current_effect == "GRAYSCALE":     
                     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                     frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+                elif current_effect == "APPROVED":
+                    cv2.putText(
+                        frame,
+                        "APPROVED!",
+                        (150, 250),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        2,
+                        (0, 255, 0),
+                        4,
+                    )    
+                elif current_effect == "FREEZE":
+                    frame = cv2.GaussianBlur(frame, (35, 35), 0)    
                 
                     
                 
