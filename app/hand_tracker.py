@@ -164,16 +164,7 @@ def main():
                         current_effect = "GRAYSCALE"
 
                     last_action_time = current_time
-
-                cv2.putText(
-                    frame,
-                    f"Effect: {current_effect}",
-                    (20, 180),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (255, 0, 255),
-                    2,
-                )   
+ 
 
         if current_effect == "NORMAL":
             pass
@@ -201,7 +192,15 @@ def main():
                 frame = frozen_frame.copy()   
                 
                     
-                
+        cv2.putText(
+            frame,
+            f"Effect: {current_effect}",
+            (20, 180),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (255, 0, 255),
+            2,
+        )  
         # print(result.hand_landmarks)
 
         cv2.imshow("gesture stage Hand Tracking", frame)
