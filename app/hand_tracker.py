@@ -24,6 +24,7 @@ def main():
     last_action_time = 0
     cooldown_time = 1.0
     current_effect = "NONE"
+    frozen_frame = None
 
     while True:
         success, frame = cap.read()
@@ -149,8 +150,10 @@ def main():
                 if current_time - last_action_time >= cooldown_time:
                     if gesture == "OPEN PALM":
                         current_effect = "NORMAL"
+                        frozen_frame = None
                     elif gesture == "FIST":
                         current_effect = "FREEZE"
+                        frozen_frame = frame.copy()
                     elif gesture == "PEACE":
                         current_effect = "PARTY MODE"
                     elif gesture == "THUMBS UP":
@@ -172,29 +175,30 @@ def main():
                     2,
                 )   
 
-                if current_effect == "NORMAL":
-                    pass
-                elif current_effect == "PARTY MODE":
-                    frame = cv2.bitwise_not(frame)
-                elif current_effect == "EDGE":
-                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                    edges = cv2.Canny(gray, 100, 200)
-                    frame = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)   
-                elif current_effect == "GRAYSCALE":     
-                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                    frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-                elif current_effect == "APPROVED":
-                    cv2.putText(
-                        frame,
-                        "APPROVED!",
-                        (150, 250),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        2,
-                        (0, 255, 0),
-                        4,
-                    )    
-                elif current_effect == "FREEZE":
-                    frame = cv2.GaussianBlur(frame, (35, 35), 0)    
+        if current_effect == "NORMAL":
+            pass
+        elif current_effect == "PARTY MODE":
+            frame = cv2.bitwise_not(frame)
+        elif current_effect == "EDGE":
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            edges = cv2.Canny(gray, 100, 200)
+            frame = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)   
+        elif current_effect == "GRAYSCALE":     
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        elif current_effect == "APPROVED":
+            cv2.putText(
+                frame,
+                "APPROVED!",
+                (150, 250),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                2,
+                (0, 255, 0),
+                4,
+            )    
+        elif current_effect == "FREEZE":
+            if frozen_frame is not None:
+                frame = frozen_frame.copy()   
                 
                     
                 
