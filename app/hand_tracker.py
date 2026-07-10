@@ -26,6 +26,10 @@ def main():
     current_effect = "NONE"
     frozen_frame = None
 
+    screenshot_countdown_start = None
+    screenshot_pending = False
+    screenshot_gesture_locked = False
+
     while True:
         success, frame = cap.read()
 
@@ -40,6 +44,9 @@ def main():
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
 
         result = landmarker.detect(mp_image)
+
+        open_palm_count = 0
+        screenshot_gesture = False
 
         if result.hand_landmarks:
             for hand_index, hand_landmarks in enumerate(result.hand_landmarks):
@@ -117,7 +124,7 @@ def main():
                 elif index_up and pinky_up and count == 2:
                     gesture = "ROCK"
                 elif index_up and count == 1:
-                    gesture = "POINT"        
+                    gesture = "POINT"     
                 else:
                     gesture = "UNKNOWN"
                 
@@ -147,7 +154,12 @@ def main():
                 )
                 current_time = time.time()
 
+                if gesture == "OPEN PALM":
+                     open_palm_count += 1
+
                 if current_time - last_action_time >= cooldown_time:
+                    effect_changed = True
+
                     if gesture == "OPEN PALM":
                         current_effect = "NORMAL"
                         frozen_frame = None
@@ -162,10 +174,29 @@ def main():
                         current_effect = "EDGE"
                     elif gesture == "POINT":
                         current_effect = "GRAYSCALE"
+                    else:
+                        effect_changed = False
 
-                    last_action_time = current_time
+                    if effect_changed:
+                        last_action_time = current_time
+
+                   
+        if open_palm_count == 2:
+            screenshot_gesture = True
+
+        if (
+            screenshot_gesture
+            and not screenshot_pending
+            and not screenshot_gesture_locked
+        ):
+            screenshot_pending = True
+            screenshot_countdown_start = time.time()
+            screenshot_gesture_locked = True
+            print("Photo countdown started")
+
+        if open_palm_count < 2 and not screenshot_pending:
+            screenshot_gesture_locked = False         
  
-
         if current_effect == "NORMAL":
             pass
         elif current_effect == "PARTY MODE":
@@ -190,6 +221,35 @@ def main():
         elif current_effect == "FREEZE":
             if frozen_frame is not None:
                 frame = frozen_frame.copy()   
+
+        if screenshot_pending:
+            elapsed_time = time.time() - screenshot_countdown_start
+            remaining_time = 3 - elapsed_time
+
+            if remaining_time > 0:
+                countdown_number = int(remaining_time) + 1
+
+                cv2.putText(
+                    frame,
+                    str(countdown_number),
+                    (frame.shape[1] // 2 - 30, frame.shape[0] // 2),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    3,
+                    (255, 255, 255),
+                    6
+                )
+
+            else:
+                filename = f"assets/screenshot_{int(time.time())}.png"                
+                success = cv2.imwrite(filename, frame)
+
+                if success:
+                    print(f"Photo saved as {filename}")
+                else:
+                    print("Failed to save photo")
+
+                screenshot_pending = False
+                screenshot_countdown_start = None        
                 
                     
         cv2.putText(
